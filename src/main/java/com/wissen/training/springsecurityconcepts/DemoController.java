@@ -10,7 +10,7 @@ public class DemoController {
 
     @GetMapping("/home")
     public String returnHomePage(){
-        return "Hello You Are A Authenticated User!..";
+        return "Hello All.. No Authentication is Required for this page..";
     }
 
     @GetMapping("/user")
