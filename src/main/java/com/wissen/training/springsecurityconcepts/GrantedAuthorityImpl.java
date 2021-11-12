@@ -9,7 +9,6 @@ public class GrantedAuthorityImpl implements GrantedAuthority {
         this.role=role;
     }
 
-
     @Override
     public String getAuthority() {
         return this.role;
