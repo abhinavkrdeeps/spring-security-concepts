@@ -1,5 +1,6 @@
 package com.wissen.training.springsecurityconcepts;
 
+import com.wissen.training.springsecurityconcepts.filters.JwtFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -22,20 +24,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     UserDetailsService userDetailsService;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication()
-//                .withUser("new_user")
-//                .password("new_password")
-//                .roles("USER")
-//                .and()
-//                .withUser("admin")
-//                .password("admin")
-//                .roles("ADMIN");
+    @Autowired
+    private JwtFilter jwtFilter;
 
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+////        auth.inMemoryAuthentication()
+////                .withUser("new_user")
+////                .password("new_password")
+////                .roles("USER")
+////                .and()
+////                .withUser("admin")
+////                .password("admin")
+////                .roles("ADMIN");
+//
+//
+//        // Authentication With JPA
+//
+//        auth.userDetailsService(userDetailsService);
+//    }
 
-        // Authentication With JPA
-
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService);
     }
 
@@ -49,11 +59,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/authenticate/**").permitAll()
+                .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
 

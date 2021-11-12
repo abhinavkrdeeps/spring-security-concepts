@@ -18,8 +18,6 @@ public class JwtUtil {
 
     private final String SECRET_KEY = "A VERY VERY SECRET KEY IT IS.. DON'T TRY TO STEAL IT";
 
-
-
     public String extractUsername(String token){
         return extractClaim(token,Claims::getSubject);
     }
