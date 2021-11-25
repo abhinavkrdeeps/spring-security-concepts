@@ -29,3 +29,40 @@ Setting Up Spring Security
 	
 	
 Get passwordEncoder setup 
+
+
+            Authentication
+
+AuthenticationProvider
+
+           
+
+User
+Entered
+Credentials
+
+AuthenticationManager
+
+AuthenticationFilter
+
+UserDetails
+Service
+
+Password
+Encoder
+
+        SecurityContext
+![image](https://user-images.githubusercontent.com/31301292/143436227-00aca940-c593-49b0-8612-670846dc9514.png)
+
+User Entered Credentials. Request First goes to AuthenticationFilter. AuthenticationFilter Converts it to a type of Authentication.
+
+AuthenticationFilter consists of a method attemptAuthentication(HttpServletRequest request, HttpServletResponse response) which converts the incoming http requests to Authentication Object.  
+
+AuthenticationFilter calls AuthenticationManager with Authentication Object .
+
+Now AuthenticationManager searches for all the AuthenticationProvider implementations till the user is 
+Authenticated successfully else all the authentication providers has been tested and then throws an exception.
+
+AuthenticationProvider by default delegates the logic of authentication to UserDetailsService and Password Encoder.
+
+After the successful Authentication, SecurityContext has been set with the current Authentication Object.![image](https://user-images.githubusercontent.com/31301292/143436271-e3b8ad47-975b-4609-bbd4-c0a6247814f4.png)
