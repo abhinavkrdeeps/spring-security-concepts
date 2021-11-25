@@ -16,10 +16,54 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ *  AuthenticationManager calls all the AuthenticationProvider implementation till the user is successfully authenticated
+ *  or all the implementation has been called and then throw the exception.
+ *
+ *
+ * AuthenticationProvider:
+ *      The AuthenticationProvider in spring security takes care of the authentication logic.
+ *      The default implementation of AuthenticationProvider delegates the responsibility of authentication to UserDetailsService
+ *      and PasswordEncoder for password validation.
+ *      But if we have some custom requirements we can build our own logic by implementing AuthenticationProvider interface.
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *  Authentication: Who the user is? (Username and password)
+ *
+ *  Integration With Jpa (UserDetailsService and UserDetails Interface)
+ *  Steps:
+ *    1) Create a class extending WebSecurityConfigurerAdapter.
+ *    2) Override the method configure(AuthenticationManagerBuilder builder)
+ *    3) Using the AuthenticationManagerBuilder class Instance we can configure how we want to authenticate the users.
+ *    4)  Options Provided By AuthenticationManagerBuilder:
+ *                    4.1) auth.inMemoryAuthentication() -> For in memory User
+ *                    4.2) auth.jdbcAuthentication(); -> For Jdbc Authentication
+ *                    4.3) auth.userDetailsService(userDetailsService); -> Integration with Spring JPA
+ *     5) UserDetailsService:
+ *               5.1) An Interface (UserDAOAuthentication)
+ *               5.2) Create a class that implements UserDetailsService's method loadUserByUsername()
+ *               5.3) Implementing loadUserByUsername():
+ *                     5.3.1) Returns an instance of UserDetails class if a user has been found successfully.
+ *                     5.3.2) This is then stored as a Principle (Current Logged-In User) in Spring Security Context.
+ *
+ *
+ *  Authorization: What the user is trying to access.
+ *  Steps:
+ *      1) Override the method configure(HttpSecurity security)
+ *
+ *
+ *
+ */
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
+    private final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
 
     @Autowired
     UserDetailsService userDetailsService;
@@ -27,22 +71,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilter jwtFilter;
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-////        auth.inMemoryAuthentication()
-////                .withUser("new_user")
-////                .password("new_password")
-////                .roles("USER")
-////                .and()
-////                .withUser("admin")
-////                .password("admin")
-////                .roles("ADMIN");
-//
-//
-//        // Authentication With JPA
-//
-//        auth.userDetailsService(userDetailsService);
-//    }
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        //auth.jdbcAuthentication();
+//        auth.inMemoryAuthentication()
+//                .withUser("new_user")
+//                .password("new_password")
+//                .roles("USER")
+//                .and()
+//                .withUser("admin")
+//                .password("admin")
+//                .roles("ADMIN");
+
+
+        // Authentication With JPA
+
+        auth.userDetailsService(userDetailsService);
+    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
