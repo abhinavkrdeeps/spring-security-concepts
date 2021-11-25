@@ -54,6 +54,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *
  *
  *  Authorization: What the user is trying to access.
+ *   Internal Flow
+ *   When a client makes a request , the AuthenticationFilter intercepts and validates the user if they are whom they are claiming.
+ *   Post authentication, the filter stores the UserDetails in applications security context. An instance of UserDetails stores name,
+ *   password, authorities.
+ *   Now the AuthorizationFilter intercepts and checks if the user has access to the particular path they are requesting based on the
+ *   authorities stored in UserDetails instance in security context.
+ *
+ *
  *  Steps:
  *      1) Override the method configure(HttpSecurity security)
  *
